@@ -6,6 +6,6 @@
         {
             "label": "Install packege",
             "type": "shell",
-            "command": "makepkg -fci; rm *.xz"        }
+            "command": "makepkg -fci; rm *.zst"        }
     ]
 }

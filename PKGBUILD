@@ -1,4 +1,4 @@
-pkgname=${PWD##*/}
+pkgname='dolphin-book-converter'
 pkgver=0.2.3
 pkgrel=1
 pkgdesc="Converter of images and books for dolphin"

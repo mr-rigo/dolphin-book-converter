@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+X-KDE-Priority=TopLevel
+Icon=image-svg
+MimeType=image/x-eps;application/illustrator;
+Actions=to-svg;
+
+[Desktop Action to-svg]
+Name=Convert to svg
+Name[ru]=Конвертировать в svg
+Exec=to-svg %F

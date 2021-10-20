@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+import os
+import sys
+from shlex import quote
+from pathlib import Path
+
+
+def get_safe_path(path):
+    if not os.path.exists(path):
+        return path
+    is_dir = os.path.isdir(path)
+
+    if is_dir:
+        extension, name_and_path = None, None
+    else:  # Получаем файла расширение а также имя файла и путь в одном
+        dot_cut = path.split('/')[-1].split('.')
+        extension = dot_cut[-1] if len(dot_cut) > 1 else ''
+        name_and_path = path[:-len(extension) - 1]
+
+    # Ищем путь в котором нет файла или папки
+    new_path, index = path, 1
+    while True:
+        if is_dir or not extension:
+            new_path = f'{path}_{index}'
+        else:
+            new_path = f'{name_and_path}_{index}.{extension}'
+        if not os.path.exists(new_path):
+            return new_path
+        index += 1
+
+
+if __name__ == "__main__":
+    for file in sys.argv[1:]:
+        if os.path.isfile(file):
+            new_file = str(Path(file).with_suffix('.djvu'))
+            new_file = get_safe_path(new_file)
+            os.system(f"pdf2djvu -o {quote(new_file)}  {quote(file)}")

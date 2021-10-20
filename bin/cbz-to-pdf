@@ -1,0 +1,86 @@
+#!/usr/bin/env python
+import os
+import argparse
+import zipfile
+import tempfile
+import logging
+import shutil
+from shlex import quote
+from pathlib import Path
+import re
+from typing import List
+
+
+def get_safe_path(path: str) -> str:
+    if not os.path.exists(path):
+        return path
+    is_folder = os.path.isdir(path)
+
+    if is_folder:
+        extension, name_and_path = None, None
+    else:  # Получаем файла расширение а также имя файла и путь в одном
+        dot_cut = path.split('/')[-1].split('.')
+        extension = dot_cut[-1] if len(dot_cut) > 1 else ''
+        name_and_path = path[:-len(extension) - 1]
+
+    # Ищем путь в котором нет файла или папки
+    new_path, index = path, 1
+
+    while True:
+        if is_folder or not extension:
+            new_path = f'{path}_{index}'
+        else:
+            new_path = f'{name_and_path}_{index}.{extension}'
+
+        if not os.path.exists(new_path):
+            return new_path
+
+        index += 1
+
+
+def sort_files(files: list) -> List[str]:
+    def atoi(text):
+        return int(text) if text.isdigit() else text
+
+    def natural_keys(text):
+        return [atoi(c) for c in re.split('(\d+)', text)]
+
+    files.sort(key=natural_keys)
+    return files
+
+
+logging.basicConfig(level=logging.ERROR)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Convert a cbz file to a pdf')
+    parser.add_argument('files', help='cbz files', nargs="*")
+    args = parser.parse_args()
+
+    if not args.files:
+        exit()
+
+    for source_file in args.files:
+        if not os.path.isfile(source_file):
+            logging.error('Not exist file:' + source_file)
+            continue
+
+        extract_folder = tempfile.mkdtemp(prefix='cbz2pdf')
+
+        output_filename = str(Path(source_file).with_suffix('.pdf'))
+        output_filename = get_safe_path(output_filename)
+
+        logging.info('Extracting "%s"' % source_file)
+
+        with zipfile.ZipFile(source_file, 'r') as z:
+            z.extractall(extract_folder)
+            z.close()
+
+        files_cache = []
+
+        for file in sort_files(os.listdir(extract_folder)):
+            files_cache.append(quote(os.path.join(extract_folder, file)))
+        logging.info(f'Creating {output_filename}')
+        os.system(
+            f"img2pdf --output {quote(output_filename)} {' '.join(files_cache)}")
+        shutil.rmtree(extract_folder)
+        logging.debug('Delete cache images')

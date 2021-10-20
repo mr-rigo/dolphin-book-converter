@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+
+import os
+import sys
+
+from shlex import quote
+
+
+def get_safe_path(path: str) -> str:
+    if not os.path.exists(path):
+        return path
+    is_dir = os.path.isdir(path)
+
+    if is_dir:
+        extension, name_and_path = None, None
+    else:
+        dot_cut = path.split('/')[-1].split('.')
+        extension = dot_cut[-1] if len(dot_cut) > 1 else ''
+        name_and_path = path[:-len(extension) - 1]
+
+    new_path, index = path, 1
+
+    while True:
+        if is_dir or not extension:
+            new_path = f'{path}_{index}'
+        else:
+            new_path = f'{name_and_path}_{index}.{extension}'
+        
+        if not os.path.exists(new_path):
+            return new_path
+
+        index += 1
+
+
+for file in sys.argv[1:]:
+    path, ext = os.path.splitext(file)
+    os.system(
+        f'ddjvu -format=pdf {quote(file)} {quote(get_safe_path(path + ".pdf"))}')

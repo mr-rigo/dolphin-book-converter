@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+X-KDE-Priority=TopLevel
+Icon=image-svg
+MimeType=image/svg+xml;
+Actions=svg-zip;
+
+[Desktop Action svg-zip]
+Name=Zip
+Exec=gzip -S z %F

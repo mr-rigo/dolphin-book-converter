@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+X-KDE-Priority=TopLevel
+Icon=image-png
+MimeType=image/vnd.microsoft.icon;
+Actions=ico-convert;
+
+[Desktop Action ico-convert]
+Name=Convert to png
+Name[ru]=Конвертировать в png
+Exec=ico-to-png %F
+

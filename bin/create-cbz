@@ -1,0 +1,83 @@
+#!/usr/bin/env python
+import argparse
+import os
+from shlex import quote
+from pathlib import Path
+
+"""
+Created by Rigo on 2019-11-20.
+Copyright (c) 2019 Rigo. All rights reserved.
+"""
+
+
+def get_safe_path(path: str) -> str:
+    if not os.path.exists(path):
+        return path
+    is_dir = os.path.isdir(path)
+
+    if is_dir:
+        extension, name_and_path = None, None
+    else:  # Получаем файла расширение а также имя файла и путь в одном
+        dot_cut = path.split('/')[-1].split('.')
+        extension = dot_cut[-1] if len(dot_cut) > 1 else ''
+        name_and_path = path[:-len(extension) - 1]
+
+    # Ищем путь в котором нет файла или папки
+    new_path, index = path, 1
+    while True:
+        if is_dir or not extension:
+            new_path = f'{path}_{index}'
+        else:
+            new_path = f'{name_and_path}_{index}.{extension}'
+        if not os.path.exists(new_path):
+            return new_path
+        index += 1
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-d', '--delete_src',
+                    help='Remove original files', action='store_true')
+parser.add_argument(
+    '-r', '--rename', help='Rename files in order', action='store_true')
+parser.add_argument('files', help='Files', nargs='*')
+
+arg = parser.parse_args()
+delete_mode = arg.delete_src
+rename_mode = arg.rename
+
+files = arg.files
+
+if not files:
+    exit()
+
+string_files = ''
+first_file = None
+fill_size = len(str(len(files)))
+
+for index, file in enumerate(files):
+    if not file:
+        continue
+    if not os.path.isfile(file):
+        raise FileNotFoundError
+
+    if not first_file:
+        first_file = str(Path(file).with_suffix('.cbz'))
+
+    if rename_mode:
+        new_path = get_safe_path(file)
+        os.rename(file, new_path)
+        file = new_path
+        files[index] = new_path
+
+    string_files += quote(file) + ' '
+
+cbz_file = get_safe_path(first_file)
+
+os.system(f'zip -j {quote(str(cbz_file))} {string_files}')
+
+if not os.path.exists(cbz_file):
+    raise FileNotFoundError
+
+if delete_mode:
+    for file in files:
+        os.remove(file)

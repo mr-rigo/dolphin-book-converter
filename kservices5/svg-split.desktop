@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+X-KDE-Priority=TopLevel
+Icon=image-svg
+MimeType=image/svg+xml;
+Actions=svg-split;
+
+[Desktop Action svg-split]
+Name=Break into pieces
+Exec=svg-split %F

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+X-KDE-Priority=TopLevel
+Icon=image-vnd.djvu
+MimeType=image/vnd.djvu;
+Actions=djvu-to-pdf;
+
+[Desktop Action djvu-to-pdf]
+Name=Convert to pdf
+Name[ru]=Конвертировать в pdf
+Exec=djvu-to-pdf %F

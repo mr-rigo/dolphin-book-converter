@@ -1,0 +1,26 @@
+#!/bin/env xonsh
+import re
+import os
+
+convert $ARG1 $ARG1.png
+
+folder = os.path.dirname($ARG1)
+folder = folder + '/' if folder else ''
+
+for x in $(echo $ARG1*.png).strip('\n').split(' '):
+    s = $(identify @(x))
+    sizes = re.findall(r'\d+x\d+',s)
+    if not sizes:
+        identify @(x)
+        continue
+    sizes = sizes[-1]
+    sizes = sizes.split('x')[0]
+
+    file = folder + sizes + '.png'
+    index = 1
+    while os.path.exists(file):
+        file = folder + sizes + " " + str(index)  + '.png'
+        index += 1
+
+    mv --backup=numbered @(x) @(file)
+

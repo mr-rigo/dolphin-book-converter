@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+X-KDE-Priority=TopLevel
+# X-KDE-Submenu=cbz-to-pdf
+Icon=application-vnd.comicbook+zip
+MimeType=application/vnd.comicbook+zip;
+Actions=cbz-to-pdf;
+
+[Desktop Action cbz-to-pdf]
+Name=Convert to pdf
+Name[ru]=Конвертировать в pdf
+Exec=cbz-to-pdf %F

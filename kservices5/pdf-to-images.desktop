@@ -1,0 +1,20 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+X-KDE-Priority=TopLevel
+X-KDE-Submenu=Convert
+# Icon=image-png
+MimeType=application/pdf;
+Actions=pdf-to-jpg;pdf-to-png;pdf-to-djvu;
+
+[Desktop Action pdf-to-jpg]
+Name=jpeg
+Exec=pdftocairo -jpeg %F
+
+[Desktop Action pdf-to-png]
+Name=png
+Exec=pdftocairo -png %F
+
+[Desktop Action pdf-to-djvu]
+Name=djvu
+Exec=pdf-to-djvu %F

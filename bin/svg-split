@@ -1,0 +1,41 @@
+#!/usr/bin/env python
+import os
+import sys
+from xml.dom import minidom
+from xml.dom.minidom import Text, Element
+
+
+for source_file in sys.argv[1:]:
+    if not os.path.isfile(source_file):
+        continue
+    doc = minidom.parse(source_file)
+    svg = doc.getElementsByTagName('svg')
+    if len(svg) != 1:
+        continue
+    svg = svg.pop()
+    nodes = []
+    for node in svg.childNodes:
+        if type(node) == Text:
+            continue
+        node: Element
+        if node.getAttribute('inkscape:label'):
+            child = (y for y in node.childNodes if type(y) == Element)
+            nodes.extend(child)
+        elif node.tagName in ('path', 'g'):
+            nodes.append(node)
+
+    base = os.path.basename(source_file)
+    base = base[:base.rfind('.')]
+    folder = os.path.dirname(source_file)
+
+    fill = len(str(len(nodes)))
+
+    for i, node in enumerate(nodes):
+        i = str(i + 1).zfill(fill)
+        path = os.path.join(folder, f'{base}_{i}.svg')
+        if os.path.exists(path):
+            continue
+        with open(path, 'w+') as file:
+            file.write(f'<svg>{node.toxml()}</svg>')
+
+    doc.unlink()

@@ -1,0 +1,19 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+X-KDE-Priority=TopLevel
+X-KDE-Submenu=cbz-pack
+Icon=application-vnd.comicbook+zip
+MimeType=image/jpeg;image/png;
+Actions=cbz-create;cbz-move;cbz-move-rename;
+
+[Desktop Action cbz-create]
+Name=Create cbz file
+Name[ru]=Создать cbz файл
+Exec=create-cbz %F
+
+[Desktop Action cbz-move]
+Name=Move files to cbz archive
+Name[ru]=Переместить файлы в cbz архив
+Exec=create-cbz -d %F
+
